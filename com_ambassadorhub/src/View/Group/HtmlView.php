@@ -52,6 +52,18 @@ class HtmlView extends BaseHtmlView
     protected $isCoordinator = false;
 
     /**
+     * @var  object[]
+     * @since  0.1.0
+     */
+    protected $upcomingEvents = [];
+
+    /**
+     * @var  object[]
+     * @since  0.1.0
+     */
+    protected $pastEvents = [];
+
+    /**
      * Display the view.
      *
      * @param   string  $tpl  The template file to include.
@@ -87,6 +99,10 @@ class HtmlView extends BaseHtmlView
             $studentId      = AmbassadorhubHelper::getStudentId((int) $user->id);
             $this->isMember = $model->isMember($id, $studentId);
         }
+
+        $events               = $model->getEvents($id, $this->canManage);
+        $this->upcomingEvents = $events['upcoming'];
+        $this->pastEvents     = $events['past'];
 
         $app->getDocument()->setTitle($item->name);
 

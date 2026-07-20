@@ -10,14 +10,17 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use SRH\Component\Ambassadorhub\Site\Helper\AmbassadorhubHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 $group = $this->item;
+
+echo AmbassadorhubHelper::renderTopbar('groups');
 ?>
-<div class="ambassadorhub ambassadorhub-group-edit">
+<div class="ambassadorhub ambassadorhub-page">
 	<h1><?php echo Text::sprintf('COM_AMBASSADORHUB_GROUP_EDIT_TITLE', $this->escape($group->name)); ?></h1>
 
 	<form action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=group.save'); ?>" method="post">
@@ -49,7 +52,7 @@ $group = $this->item;
 		</div>
 
 		<button type="submit" class="ambassadorhub-btn"><?php echo Text::_('JSAVE'); ?></button>
-		<a class="ambassadorhub-btn" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=group&id=' . (int) $group->id); ?>">
+		<a class="ambassadorhub-btn ambassadorhub-btn--outline" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=group&id=' . (int) $group->id); ?>">
 			<?php echo Text::_('JCANCEL'); ?>
 		</a>
 

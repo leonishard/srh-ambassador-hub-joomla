@@ -7,6 +7,7 @@
 
 namespace SRH\Component\Ambassadorhub\Site\Model;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Database\ParameterType;
 
@@ -101,5 +102,59 @@ class GroupModel extends BaseDatabaseModel
         $db->setQuery($query);
 
         return (bool) $db->loadResult();
+    }
+
+    /**
+     * Fetches a Group's Events, split into upcoming and past. Approved Events are always
+     * included; the Group's manager or a Coordinator also sees pending/rejected ones so
+     * they can track their own submissions.
+     *
+     * @param   integer  $groupId       The Group id.
+     * @param   boolean  $includeAll    Whether to include non-approved Events too.
+     *
+     * @return  array{upcoming: object[], past: object[]}
+     *
+     * @since   0.1.0
+     */
+    public function getEvents(int $groupId, bool $includeAll = false): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select(
+                [
+                    $db->quoteName('id'),
+                    $db->quoteName('title'),
+                    $db->quoteName('event_date'),
+                    $db->quoteName('location'),
+                    $db->quoteName('category'),
+                    $db->quoteName('status'),
+                ]
+            )
+            ->select('(SELECT COUNT(*) FROM ' . $db->quoteName('#__ambassadorhub_event_attendees') . ' ea WHERE ea.event_id = ' . $db->quoteName('a.id') . ') AS attendee_count')
+            ->from($db->quoteName('#__ambassadorhub_events', 'a'))
+            ->where($db->quoteName('group_id') . ' = :groupId')
+            ->bind(':groupId', $groupId, ParameterType::INTEGER)
+            ->order($db->quoteName('event_date') . ' ASC');
+
+        if (!$includeAll) {
+            $query->where($db->quoteName('status') . ' = ' . $db->quote('approved'));
+        }
+
+        $db->setQuery($query);
+        $events = $db->loadObjectList() ?: [];
+
+        $now      = Factory::getDate()->toSql();
+        $upcoming = [];
+        $past     = [];
+
+        foreach ($events as $event) {
+            if ($event->event_date >= $now) {
+                $upcoming[] = $event;
+            } else {
+                $past[] = $event;
+            }
+        }
+
+        return ['upcoming' => $upcoming, 'past' => $past];
     }
 }

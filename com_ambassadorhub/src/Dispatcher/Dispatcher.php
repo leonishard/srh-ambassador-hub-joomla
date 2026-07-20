@@ -29,7 +29,9 @@ class Dispatcher extends ComponentDispatcher
      */
     public function dispatch()
     {
-        $this->app->getDocument()->getWebAssetManager()->useStyle('com_ambassadorhub.frontend');
+        $this->app->getDocument()->getWebAssetManager()
+            ->useStyle('com_ambassadorhub.frontend')
+            ->useScript('com_ambassadorhub.theme-toggle');
 
         parent::dispatch();
     }

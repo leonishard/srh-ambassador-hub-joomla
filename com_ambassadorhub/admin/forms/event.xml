@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form addfieldprefix="SRH\Component\Ambassadorhub\Administrator\Field">
+	<fieldset name="event">
+
+		<field
+			name="id"
+			type="text"
+			label="JGLOBAL_FIELD_ID_LABEL"
+			default="0"
+			class="readonly"
+			readonly="true"
+		/>
+
+		<field
+			name="title"
+			type="text"
+			label="COM_AMBASSADORHUB_FIELD_TITLE_LABEL"
+			required="true"
+			size="40"
+		/>
+
+		<field
+			name="alias"
+			type="text"
+			label="JFIELD_ALIAS_LABEL"
+			description="JFIELD_ALIAS_DESC"
+			hint="JFIELD_ALIAS_PLACEHOLDER"
+		/>
+
+		<field
+			name="group_id"
+			type="group"
+			label="COM_AMBASSADORHUB_FIELD_GROUP_LABEL"
+			required="true"
+			>
+			<option value="">COM_AMBASSADORHUB_FIELD_GROUP_SELECT</option>
+		</field>
+
+		<field
+			name="event_date"
+			type="calendar"
+			label="COM_AMBASSADORHUB_FIELD_EVENT_DATE_LABEL"
+			format="%Y-%m-%d %H:%M:%S"
+			required="true"
+			filter="user_utc"
+			todaybutton="true"
+			showtime="true"
+		/>
+
+		<field
+			name="location"
+			type="text"
+			label="COM_AMBASSADORHUB_FIELD_LOCATION_LABEL"
+			size="40"
+		/>
+
+		<field
+			name="category"
+			type="text"
+			label="COM_AMBASSADORHUB_FIELD_CATEGORY_LABEL"
+			size="30"
+		/>
+
+		<field
+			name="status"
+			type="list"
+			label="COM_AMBASSADORHUB_FIELD_STATUS_LABEL"
+			default="pending"
+			validate="options"
+			>
+			<option value="pending">COM_AMBASSADORHUB_STATUS_PENDING</option>
+			<option value="approved">COM_AMBASSADORHUB_STATUS_APPROVED</option>
+			<option value="rejected">COM_AMBASSADORHUB_STATUS_REJECTED</option>
+		</field>
+
+		<field
+			name="poster"
+			type="media"
+			label="COM_AMBASSADORHUB_FIELD_POSTER_LABEL"
+		/>
+
+		<field
+			name="description"
+			type="textarea"
+			label="COM_AMBASSADORHUB_FIELD_DESCRIPTION_LABEL"
+			rows="8"
+		/>
+
+		<field
+			name="submitted_by"
+			type="student"
+			label="COM_AMBASSADORHUB_FIELD_SUBMITTED_BY_LABEL"
+			>
+			<option value="">COM_AMBASSADORHUB_FIELD_MANAGER_NONE</option>
+		</field>
+
+		<field
+			name="approved_by"
+			type="student"
+			label="COM_AMBASSADORHUB_FIELD_APPROVED_BY_LABEL"
+			>
+			<option value="">COM_AMBASSADORHUB_FIELD_MANAGER_NONE</option>
+		</field>
+
+		<field
+			name="created"
+			type="calendar"
+			label="JGLOBAL_FIELD_CREATED_LABEL"
+			format="%Y-%m-%d %H:%M:%S"
+			filter="user_utc"
+			readonly="true"
+		/>
+
+	</fieldset>
+</form>

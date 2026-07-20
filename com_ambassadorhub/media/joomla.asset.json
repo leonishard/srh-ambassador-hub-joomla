@@ -9,6 +9,14 @@
       "name": "com_ambassadorhub.frontend",
       "type": "style",
       "uri": "com_ambassadorhub/ambassadorhub.css"
+    },
+    {
+      "name": "com_ambassadorhub.theme-toggle",
+      "type": "script",
+      "uri": "com_ambassadorhub/ambassadorhub.js",
+      "attributes": {
+        "defer": true
+      }
     }
   ]
 }

@@ -28,31 +28,31 @@ class HtmlView extends BaseHtmlView
      * @var  array
      * @since  0.1.0
      */
-    protected $items = [];
+    public $items = [];
 
     /**
      * @var  \Joomla\CMS\Pagination\Pagination
      * @since  0.1.0
      */
-    protected $pagination;
+    public $pagination;
 
     /**
      * @var  \Joomla\Registry\Registry
      * @since  0.1.0
      */
-    protected $state;
+    public $state;
 
     /**
      * @var  \Joomla\CMS\Form\Form
      * @since  0.1.0
      */
-    protected $filterForm;
+    public $filterForm;
 
     /**
      * @var  array
      * @since  0.1.0
      */
-    protected $activeFilters = [];
+    public $activeFilters = [];
 
     /**
      * Display the view.

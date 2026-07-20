@@ -1,17 +1,689 @@
 /*
- * Ambassador Hub - placeholder stylesheet.
- * The full dark-mode-by-default design system (IBM Plex Sans/Mono, accent color,
- * sharp corners, activity-feed stripes) lands in the dedicated styling pass once
- * the CRUD features are in place. This file only proves the Web Asset Manager
- * pipeline works for now.
+ * Ambassador Hub design system.
+ * Ported from the original Strapi + React app's tokens and component patterns
+ * (see index.css, Card.css, Button.css, StatusTag.css, Sidebar.css, LedgerEntry.css
+ * in the reference repo) so the Joomla rebuild looks like a continuation of the
+ * same product, not a different app.
  */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+	--ink: #0a0f12;
+	--paper: #f5f3ef;
+	--signal: #d44407;
+	--signal-hover: #b2390a;
+	--ash: #4c5a61;
+	--line-dark: #1e2a30;
+	--line-light: #dedad2;
+
+	--status-pending: #c98a1d;
+	--status-approved: #2f6f4e;
+	--status-rejected: #b23a2e;
+
+	--font-display: 'IBM Plex Sans', sans-serif;
+	--font-body: 'IBM Plex Sans', sans-serif;
+	--font-mono: 'IBM Plex Mono', monospace;
+
+	--radius: 2px;
+	--topbar-height: 84px;
+
+	color-scheme: dark light;
+}
+
+:root[data-ah-theme='dark'] {
+	--bg: var(--ink);
+	--fg: var(--paper);
+	--surface: #10171b;
+	--line: var(--line-dark);
+	--ash-fg: #8b969b;
+}
+
+:root[data-ah-theme='light'] {
+	--bg: var(--paper);
+	--fg: var(--ink);
+	--surface: #ffffff;
+	--line: var(--line-light);
+	--ash-fg: var(--ash);
+}
+
+/* Default to dark until the toggle script runs, so there's no flash of the wrong theme. */
+:root:not([data-ah-theme]) {
+	--bg: var(--ink);
+	--fg: var(--paper);
+	--surface: #10171b;
+	--line: var(--line-dark);
+	--ash-fg: #8b969b;
+}
+
+/*
+ * The surrounding Joomla template (header, breadcrumb, menu/login sidebar modules)
+ * is hidden on Ambassador Hub pages so the component reads as its own full-bleed
+ * app, matching the original product, rather than a component embedded in a CMS
+ * page. Joomla tags the <body> with the component's element name automatically.
+ */
+body.com_ambassadorhub {
+	background: var(--bg);
+	color: var(--fg);
+	font-family: var(--font-body);
+	margin: 0;
+	padding: 0;
+}
+
+body.com_ambassadorhub > header.header,
+body.com_ambassadorhub .mod-breadcrumbs__wrapper,
+body.com_ambassadorhub footer.footer,
+body.com_ambassadorhub .container-sidebar-right,
+body.com_ambassadorhub .container-sidebar-left,
+body.com_ambassadorhub .container-banner,
+body.com_ambassadorhub .container-top-a,
+body.com_ambassadorhub .container-top-b,
+body.com_ambassadorhub .container-bottom-a,
+body.com_ambassadorhub .container-bottom-b {
+	display: none !important;
+}
+
+body.com_ambassadorhub .site-grid {
+	display: block;
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	padding: 0;
+}
+
+body.com_ambassadorhub .site-grid .container-component {
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	padding: 0;
+}
+
+body.com_ambassadorhub main {
+	padding: 0 !important;
+}
 
 .ambassadorhub {
 	box-sizing: border-box;
+	font-family: var(--font-body);
 }
 
 .ambassadorhub *,
 .ambassadorhub *::before,
 .ambassadorhub *::after {
 	box-sizing: inherit;
+}
+
+.ambassadorhub h1,
+.ambassadorhub h2,
+.ambassadorhub h3 {
+	font-family: var(--font-display);
+	margin: 0;
+}
+
+.ambassadorhub h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+}
+
+.ambassadorhub h2 {
+	font-size: 1.75rem;
+	font-weight: 600;
+}
+
+.ambassadorhub a {
+	color: inherit;
+}
+
+.ambassadorhub button,
+.ambassadorhub input,
+.ambassadorhub select,
+.ambassadorhub textarea {
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+}
+
+.ambassadorhub-page {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 2rem 2.5rem 4rem;
+}
+
+.ambassadorhub-mono,
+.mono {
+	font-family: var(--font-mono);
+	letter-spacing: 0.02em;
+}
+
+.ambassadorhub-caption,
+.caption {
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	color: var(--ash-fg);
+}
+
+/* ---- Topbar ---- */
+
+.ambassadorhub-topbar {
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: var(--topbar-height);
+	background: var(--ink);
+	color: var(--paper);
+	display: flex;
+	align-items: stretch;
+	border-bottom: 1px solid var(--line-dark);
+	overflow-x: auto;
+	overflow-y: hidden;
+	z-index: 10;
+}
+
+.ambassadorhub-topbar__brand {
+	display: flex;
+	align-items: center;
+	padding: 0 1.25rem;
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	letter-spacing: 0.06em;
+	color: var(--signal);
+	border-right: 1px solid var(--line-dark);
+	white-space: nowrap;
+	flex-shrink: 0;
+	text-decoration: none;
+}
+
+.ambassadorhub-topbar__nav {
+	display: flex;
+	flex-direction: row;
+	flex-shrink: 0;
+}
+
+.ambassadorhub-topbar__nav-item {
+	display: flex;
+	align-items: center;
+	padding: 0 1.1rem;
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	letter-spacing: 0.04em;
+	text-decoration: none;
+	color: #8b969b;
+	white-space: nowrap;
+	border-bottom: 2px solid transparent;
+	transition: border-color 100ms ease-out, color 100ms ease-out;
+}
+
+.ambassadorhub-topbar__nav-item:hover {
+	color: var(--paper);
+}
+
+.ambassadorhub-topbar__nav-item--active {
+	color: var(--paper);
+	border-bottom-color: var(--signal);
+}
+
+.ambassadorhub-topbar__footer {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.5rem 1.25rem;
+	border-left: 1px solid var(--line-dark);
+	flex-shrink: 0;
+	margin-left: auto;
+	min-width: fit-content;
+}
+
+.ambassadorhub-topbar__user-text {
+	text-align: right;
+	white-space: nowrap;
+	display: flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+}
+
+.ambassadorhub-topbar__user-role {
+	text-transform: uppercase;
+	color: var(--ash-fg);
+}
+
+.ambassadorhub-topbar__actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.ambassadorhub-topbar__btn {
+	display: block;
+	background: transparent;
+	border: 1px solid var(--line-dark);
+	color: var(--paper);
+	padding: 0.3rem 0.55rem;
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	letter-spacing: 0.04em;
+	cursor: pointer;
+	border-radius: var(--radius);
+	text-align: left;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: border-color 100ms ease-out;
+}
+
+.ambassadorhub-topbar__btn:hover {
+	border-color: var(--signal);
+}
+
+.ambassadorhub-topbar__logout-form {
+	display: inline-flex;
+	margin: 0;
+}
+
+/* ---- Buttons ---- */
+
+.ambassadorhub-btn,
+.btn {
+	display: inline-block;
+	border-radius: var(--radius);
+	padding: 0.6rem 1.1rem;
+	font-size: 0.8125rem;
+	letter-spacing: 0.04em;
+	cursor: pointer;
+	border: 1px solid var(--signal);
+	background: var(--signal);
+	color: var(--paper);
+	text-decoration: none;
+	transition: background-color 100ms ease-out, color 100ms ease-out;
+}
+
+.ambassadorhub-btn:hover,
+.btn:hover {
+	background: var(--signal-hover);
+	color: var(--paper);
+}
+
+.ambassadorhub-btn--outline {
+	background: transparent;
+	color: var(--signal);
+}
+
+.ambassadorhub-btn--outline:hover {
+	background: var(--signal);
+	color: var(--paper);
+}
+
+.ambassadorhub-btn--danger {
+	background: transparent;
+	color: var(--status-rejected);
+	border-color: var(--status-rejected);
+}
+
+.ambassadorhub-btn--danger:hover {
+	background: var(--status-rejected);
+	color: var(--paper);
+}
+
+/* ---- Cards ---- */
+
+.ambassadorhub-card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 1rem;
+	margin-top: 1.5rem;
+}
+
+.ambassadorhub-card {
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	padding: 1.25rem;
+	background: var(--surface);
+	transition: border-color 100ms ease-out;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.ambassadorhub-card:hover {
+	border-color: var(--signal);
+}
+
+.ambassadorhub-card__link {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	color: inherit;
+	text-decoration: none;
+}
+
+.ambassadorhub-card__title {
+	font-size: 1.0625rem;
+	font-weight: 600;
+}
+
+.ambassadorhub-card__poster {
+	width: calc(100% + 2.5rem);
+	height: 140px;
+	margin: -1.25rem -1.25rem 0.25rem;
+	border-bottom: 1px solid var(--line);
+	object-fit: cover;
+	display: block;
+}
+
+.ambassadorhub-card__date {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0.4rem 0.9rem;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--bg);
+}
+
+.ambassadorhub-card__date-month {
+	font-size: 0.6875rem;
+	letter-spacing: 0.1em;
+	color: var(--ash-fg);
+}
+
+.ambassadorhub-card__date-day {
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: 1.15;
+	color: var(--signal);
+}
+
+.ambassadorhub-card__date-time {
+	font-size: 0.75rem;
+	color: var(--ash-fg);
+	margin-top: 0.1rem;
+}
+
+.ambassadorhub-card__meta {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.ambassadorhub-card__description {
+	color: var(--ash-fg);
+	font-size: 0.9375rem;
+}
+
+.ambassadorhub-card__footer {
+	margin-top: auto;
+	padding-top: 0.75rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+/* ---- Status tags ---- */
+
+.ambassadorhub-status-tag {
+	display: inline-block;
+	font-size: 0.75rem;
+	letter-spacing: 0.04em;
+	padding: 0.15rem 0.5rem;
+	border-radius: var(--radius);
+	font-family: var(--font-mono);
+}
+
+.ambassadorhub-status-tag--pending {
+	border: 1px solid var(--status-pending);
+	color: var(--status-pending);
+}
+
+.ambassadorhub-status-tag--approved {
+	border: 1px solid var(--status-approved);
+	color: var(--status-approved);
+}
+
+.ambassadorhub-status-tag--rejected {
+	border: 1px solid var(--status-rejected);
+	color: var(--status-rejected);
+}
+
+/* ---- Filter bar ---- */
+
+.ambassadorhub-filter-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: end;
+	gap: 0.75rem;
+	margin-top: 1.5rem;
+	padding: 1rem 1.25rem;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--surface);
+}
+
+.ambassadorhub-filter-bar label {
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	color: var(--ash-fg);
+	display: block;
+	margin-bottom: 0.25rem;
+}
+
+.ambassadorhub-filter-bar select,
+.ambassadorhub-filter-bar input[type='checkbox'] {
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--bg);
+	color: var(--fg);
+	padding: 0.55rem 0.65rem;
+}
+
+/* ---- Forms ---- */
+
+.ambassadorhub-field {
+	margin-bottom: 1rem;
+	max-width: 480px;
+}
+
+.ambassadorhub-field label {
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	color: var(--ash-fg);
+	display: block;
+	margin-bottom: 0.35rem;
+}
+
+.ambassadorhub-field input,
+.ambassadorhub-field textarea {
+	width: 100%;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--surface);
+	color: var(--fg);
+	padding: 0.6rem 0.75rem;
+}
+
+.ambassadorhub-event-status-note {
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	color: var(--status-pending);
+	border: 1px solid var(--status-pending);
+	border-radius: var(--radius);
+	padding: 0.6rem 0.9rem;
+	display: inline-block;
+	margin-bottom: 1rem;
+}
+
+/* ---- Ledger / activity feed (My Circle) ---- */
+
+.ambassadorhub-ledger-entry {
+	display: flex;
+	align-items: baseline;
+	gap: 1rem;
+	padding: 0.75rem 0 0.75rem 0.85rem;
+	border-left: 2px solid var(--signal);
+	border-bottom: 1px solid var(--line);
+}
+
+.ambassadorhub-ledger-entry:last-child {
+	border-bottom: none;
+}
+
+.ambassadorhub-ledger-entry__time {
+	flex-shrink: 0;
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	color: var(--ash-fg);
+	width: 4.5rem;
+}
+
+.ambassadorhub-ledger-entry__text {
+	font-size: 0.9375rem;
+}
+
+/* ---- Group detail ---- */
+
+.ambassadorhub-group-detail__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+	margin-top: 1rem;
+	flex-wrap: wrap;
+}
+
+.ambassadorhub-group-detail__header-actions {
+	display: flex;
+	gap: 0.75rem;
+	flex-shrink: 0;
+	flex-wrap: wrap;
+}
+
+.ambassadorhub-group-detail__cover {
+	width: 100%;
+	height: 240px;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	overflow: hidden;
+	margin-top: 1rem;
+}
+
+.ambassadorhub-group-detail__cover img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.ambassadorhub-group-detail__identity {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+}
+
+.ambassadorhub-group-detail__avatar {
+	width: 64px;
+	height: 64px;
+	flex-shrink: 0;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	overflow: hidden;
+	background: var(--surface);
+}
+
+.ambassadorhub-group-detail__avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.ambassadorhub-group-detail__body {
+	display: grid;
+	grid-template-columns: 1fr 280px;
+	gap: 2.5rem;
+	align-items: start;
+	margin-top: 1.5rem;
+}
+
+.ambassadorhub-group-detail__main {
+	min-width: 0;
+}
+
+.ambassadorhub-group-detail__sidebar {
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--surface);
+	padding: 1.25rem;
+	position: sticky;
+	top: calc(var(--topbar-height) + 1.5rem);
+}
+
+.ambassadorhub-group-detail__sidebar h3 {
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	letter-spacing: 0.04em;
+	color: var(--ash-fg);
+	text-transform: uppercase;
+	margin: 1.25rem 0 0.5rem;
+}
+
+.ambassadorhub-group-detail__sidebar h3:first-child {
+	margin-top: 0;
+}
+
+.ambassadorhub-group-detail__event-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.5rem;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid var(--line);
+	font-size: 0.875rem;
+}
+
+.ambassadorhub-group-detail__event-row:last-child {
+	border-bottom: none;
+}
+
+@media (max-width: 860px) {
+	.ambassadorhub-group-detail__body {
+		grid-template-columns: 1fr;
+	}
+
+	.ambassadorhub-group-detail__sidebar {
+		position: static;
+	}
+}
+
+/* ---- Home ---- */
+
+.ambassadorhub-home {
+	display: flex;
+	align-items: center;
+	min-height: calc(100vh - var(--topbar-height) - 4rem);
+}
+
+.ambassadorhub-home__eyebrow {
+	display: block;
+	color: var(--signal);
+	font-family: var(--font-mono);
+	margin-bottom: 1rem;
+}
+
+.ambassadorhub-home__description {
+	margin-top: 1rem;
+	font-size: 1.0625rem;
+	line-height: 1.6;
+	color: var(--ash-fg);
+	max-width: 560px;
+}
+
+.ambassadorhub-home__actions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 2rem;
 }

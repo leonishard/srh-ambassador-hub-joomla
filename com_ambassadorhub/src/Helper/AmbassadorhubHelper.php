@@ -172,4 +172,23 @@ class AmbassadorhubHelper
 
         return self::isGroupManager($groupId, $studentId);
     }
+
+    /**
+     * Renders the shared topbar (brand, nav, auth state, theme toggle) used across every
+     * Ambassador Hub page in place of Joomla's default template chrome, which is hidden
+     * for this component via CSS.
+     *
+     * @param   string  $activeView  The current view name, to highlight in the nav.
+     *
+     * @return  string
+     *
+     * @since   0.1.0
+     */
+    public static function renderTopbar(string $activeView): string
+    {
+        ob_start();
+        require JPATH_SITE . '/components/com_ambassadorhub/layouts/topbar.php';
+
+        return ob_get_clean();
+    }
 }
