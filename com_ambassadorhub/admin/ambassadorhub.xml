@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="component" method="upgrade">
+	<name>com_ambassadorhub</name>
+	<author>SRH Ambassador Hub</author>
+	<creationDate>2026-07</creationDate>
+	<copyright>(C) 2026 SRH Ambassador Hub</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<version>0.1.0</version>
+	<description>COM_AMBASSADORHUB_XML_DESCRIPTION</description>
+	<namespace path="src">SRH\Component\Ambassadorhub</namespace>
+
+	<scriptfile>script.php</scriptfile>
+
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+
+	<files folder="site">
+		<folder>src</folder>
+		<folder>tmpl</folder>
+	</files>
+	<languages folder="site">
+		<language tag="en-GB">language/en-GB/com_ambassadorhub.ini</language>
+		<language tag="de-DE">language/de-DE/com_ambassadorhub.ini</language>
+	</languages>
+	<media destination="com_ambassadorhub" folder="media">
+		<folder>css</folder>
+		<filename>joomla.asset.json</filename>
+	</media>
+
+	<administration>
+		<menu img="class:groups">COM_AMBASSADORHUB</menu>
+		<submenu>
+			<menu link="option=com_ambassadorhub&amp;view=dashboard">COM_AMBASSADORHUB_MENU_DASHBOARD</menu>
+			<menu link="option=com_ambassadorhub&amp;view=groups">COM_AMBASSADORHUB_MENU_GROUPS</menu>
+		</submenu>
+		<files folder="admin">
+			<filename>access.xml</filename>
+			<filename>ambassadorhub.xml</filename>
+			<filename>script.php</filename>
+			<folder>forms</folder>
+			<folder>services</folder>
+			<folder>sql</folder>
+			<folder>src</folder>
+			<folder>tmpl</folder>
+		</files>
+		<languages folder="admin/language">
+			<language tag="en-GB">en-GB/com_ambassadorhub.ini</language>
+			<language tag="en-GB">en-GB/com_ambassadorhub.sys.ini</language>
+			<language tag="de-DE">de-DE/com_ambassadorhub.ini</language>
+			<language tag="de-DE">de-DE/com_ambassadorhub.sys.ini</language>
+		</languages>
+	</administration>
+</extension>

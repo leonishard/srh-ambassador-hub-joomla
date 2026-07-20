@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS `#__ambassadorhub_group_proposals`;
+DROP TABLE IF EXISTS `#__ambassadorhub_friendships`;
+DROP TABLE IF EXISTS `#__ambassadorhub_comments`;
+DROP TABLE IF EXISTS `#__ambassadorhub_posts`;
+DROP TABLE IF EXISTS `#__ambassadorhub_event_attendees`;
+DROP TABLE IF EXISTS `#__ambassadorhub_events`;
+DROP TABLE IF EXISTS `#__ambassadorhub_group_members`;
+DROP TABLE IF EXISTS `#__ambassadorhub_groups`;
+DROP TABLE IF EXISTS `#__ambassadorhub_students`;

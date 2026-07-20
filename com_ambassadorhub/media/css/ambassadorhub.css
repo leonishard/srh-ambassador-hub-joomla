@@ -1,0 +1,17 @@
+/*
+ * Ambassador Hub - placeholder stylesheet.
+ * The full dark-mode-by-default design system (IBM Plex Sans/Mono, accent color,
+ * sharp corners, activity-feed stripes) lands in the dedicated styling pass once
+ * the CRUD features are in place. This file only proves the Web Asset Manager
+ * pipeline works for now.
+ */
+
+.ambassadorhub {
+	box-sizing: border-box;
+}
+
+.ambassadorhub *,
+.ambassadorhub *::before,
+.ambassadorhub *::after {
+	box-sizing: inherit;
+}

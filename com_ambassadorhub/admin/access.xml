@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<access component="com_ambassadorhub">
+	<section name="component">
+		<action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC" />
+		<action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC" />
+		<action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE_COMPONENT_DESC" />
+		<action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE_COMPONENT_DESC" />
+		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
+		<action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_EDITSTATE_COMPONENT_DESC" />
+		<action name="ambassadorhub.manage.own" title="COM_AMBASSADORHUB_ACTION_MANAGE_OWN" description="COM_AMBASSADORHUB_ACTION_MANAGE_OWN_DESC" />
+		<action name="ambassadorhub.review" title="COM_AMBASSADORHUB_ACTION_REVIEW" description="COM_AMBASSADORHUB_ACTION_REVIEW_DESC" />
+	</section>
+</access>

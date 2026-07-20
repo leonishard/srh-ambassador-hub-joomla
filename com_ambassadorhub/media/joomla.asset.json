@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_ambassadorhub",
+  "version": "0.1.0",
+  "description": "Ambassador Hub component assets",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "com_ambassadorhub.frontend",
+      "type": "style",
+      "uri": "com_ambassadorhub/ambassadorhub.css"
+    }
+  ]
+}
