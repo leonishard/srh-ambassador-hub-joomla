@@ -86,7 +86,7 @@ echo AmbassadorhubHelper::renderTopbar('events');
 			<?php else : ?>
 				<form action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=events.rsvp'); ?>" method="post">
 					<input type="hidden" name="id" value="<?php echo (int) $event->id; ?>">
-					<button type="submit" class="ambassadorhub-btn"><?php echo Text::_('COM_AMBASSADORHUB_EVENT_RSVP'); ?></button>
+					<button type="submit" class="ambassadorhub-btn"><?php echo Text::_('COM_AMBASSADORHUB_EVENT_IM_ATTENDING'); ?></button>
 					<?php echo HTMLHelper::_('form.token'); ?>
 				</form>
 			<?php endif; ?>

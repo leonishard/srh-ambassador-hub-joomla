@@ -8,6 +8,7 @@
 namespace SRH\Component\Ambassadorhub\Site\Helper;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
 
@@ -206,6 +207,59 @@ class AmbassadorhubHelper
     }
 
     /**
+     * Adds a Student's Joomla user to the "Group Manager" user group, if it exists
+     * and they aren't already a direct member -- so a newly-promoted manager shows
+     * up correctly in Users > Manage, not just in the `manager_student_id` column
+     * that actually drives the per-group permission check.
+     *
+     * @param   integer  $studentId  The Student id being promoted.
+     *
+     * @return  void
+     *
+     * @since   0.1.0
+     */
+    public static function promoteToGroupManagerRole(int $studentId): void
+    {
+        if ($studentId <= 0) {
+            return;
+        }
+
+        /** @var DatabaseInterface $db */
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('user_id'))
+            ->from($db->quoteName('#__ambassadorhub_students'))
+            ->where($db->quoteName('id') . ' = :id')
+            ->bind(':id', $studentId, ParameterType::INTEGER);
+        $db->setQuery($query);
+        $userId = (int) $db->loadResult();
+
+        if (!$userId) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__usergroups'))
+            ->where($db->quoteName('title') . ' = ' . $db->quote('Group Manager'));
+        $db->setQuery($query);
+        $groupManagerId = (int) $db->loadResult();
+
+        if (!$groupManagerId) {
+            return;
+        }
+
+        $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($userId);
+
+        if (!$user || $user->id <= 0 || \in_array($groupManagerId, $user->groups, true)) {
+            return;
+        }
+
+        $user->groups = array_values(array_unique([...$user->groups, $groupManagerId]));
+        $user->save();
+    }
+
+    /**
      * Renders the shared topbar (brand, nav, auth state, theme toggle) used across every
      * Ambassador Hub page in place of Joomla's default template chrome, which is hidden
      * for this component via CSS.
@@ -222,5 +276,71 @@ class AmbassadorhubHelper
         require JPATH_SITE . '/components/com_ambassadorhub/layouts/topbar.php';
 
         return ob_get_clean();
+    }
+
+    /**
+     * The site language tags Ambassador Hub ships its own UI copy in.
+     *
+     * @since  0.1.0
+     */
+    public const SUPPORTED_LANGUAGE_TAGS = ['en-GB', 'de-DE'];
+
+    /**
+     * Name of the cookie storing the visitor's chosen Ambassador Hub UI language --
+     * independent of the site's own default language, since this is a lightweight
+     * per-component switch rather than full Joomla multilingual routing.
+     *
+     * @since  0.1.0
+     */
+    public const LANGUAGE_COOKIE = 'ambassadorhub_lang';
+
+    /**
+     * The visitor's current Ambassador Hub UI language, from their cookie if set and
+     * valid, else the site's default language tag.
+     *
+     * @return  string
+     *
+     * @since   0.1.0
+     */
+    public static function getCurrentLanguageTag(): string
+    {
+        $cookieValue = Factory::getApplication()->getInput()->cookie->getString(self::LANGUAGE_COOKIE, '');
+
+        if (\in_array($cookieValue, self::SUPPORTED_LANGUAGE_TAGS, true)) {
+            return $cookieValue;
+        }
+
+        return Factory::getApplication()->getLanguage()->getTag();
+    }
+
+    /**
+     * Fetches a Student's profile picture URL by their Joomla user id, without lazily
+     * creating a Student row -- used to render the topbar avatar for any signed-in
+     * user, including ones who haven't taken an Ambassador Hub action yet.
+     *
+     * @param   integer  $userId  The Joomla user id.
+     *
+     * @return  string|null
+     *
+     * @since   0.1.0
+     */
+    public static function getProfilePictureForUser(int $userId): ?string
+    {
+        if ($userId <= 0) {
+            return null;
+        }
+
+        /** @var DatabaseInterface $db */
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('profile_picture'))
+            ->from($db->quoteName('#__ambassadorhub_students'))
+            ->where($db->quoteName('user_id') . ' = :userId')
+            ->bind(':userId', $userId, ParameterType::INTEGER);
+
+        $db->setQuery($query);
+        $picture = $db->loadResult();
+
+        return $picture ?: null;
     }
 }

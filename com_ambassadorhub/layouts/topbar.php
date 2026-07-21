@@ -12,12 +12,25 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+use SRH\Component\Ambassadorhub\Site\Helper\AmbassadorhubHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
 $user = Factory::getApplication()->getIdentity();
+
+$profilePicture   = $user->guest ? null : AmbassadorhubHelper::getProfilePictureForUser((int) $user->id);
+$currentLangTag   = AmbassadorhubHelper::getCurrentLanguageTag();
+$targetLangTag    = $currentLangTag === 'de-DE' ? 'en-GB' : 'de-DE';
+$targetLangLabel  = $targetLangTag === 'de-DE' ? 'DEUTSCH' : 'ENGLISH';
+
+// Reuse the exact current URL (whatever page/params this is) rather than Route::_(),
+// which would otherwise need every view's own id/filter params reconstructed here too.
+$langToggleUri = Uri::getInstance();
+$langToggleUri->setVar('ah_lang', $targetLangTag);
+$langToggleUrl = htmlspecialchars($langToggleUri->toString(['path', 'query', 'fragment']), ENT_QUOTES, 'UTF-8');
 
 $navItems = [
 	'discover' => ['view' => 'discover', 'label' => 'COM_AMBASSADORHUB_PAGE_DISCOVER'],
@@ -48,20 +61,34 @@ if (!$user->guest && $user->authorise('ambassadorhub.review', 'com_ambassadorhub
 	</nav>
 
 	<div class="ambassadorhub-topbar__footer">
-		<?php if ($user->guest) : ?>
-			<span class="ambassadorhub-topbar__user-text">
-				<span><?php echo Text::_('COM_AMBASSADORHUB_TOPBAR_GUEST'); ?></span>
-				<span class="ambassadorhub-topbar__user-role"><?php echo Text::_('COM_AMBASSADORHUB_TOPBAR_BROWSING_PUBLICLY'); ?></span>
-			</span>
-		<?php else : ?>
-			<span class="ambassadorhub-topbar__user-text">
-				<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=profile'); ?>">
-					<?php echo htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8'); ?>
-				</a>
-			</span>
-		<?php endif; ?>
+		<div class="ambassadorhub-topbar__user">
+			<?php if ($user->guest) : ?>
+				<span class="ambassadorhub-topbar__user-text">
+					<span><?php echo Text::_('COM_AMBASSADORHUB_TOPBAR_GUEST'); ?></span>
+					<span class="ambassadorhub-topbar__user-role"><?php echo Text::_('COM_AMBASSADORHUB_TOPBAR_BROWSING_PUBLICLY'); ?></span>
+				</span>
+			<?php else : ?>
+				<span class="ambassadorhub-topbar__user-text">
+					<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=profile'); ?>">
+						<?php echo htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8'); ?>
+					</a>
+				</span>
+			<?php endif; ?>
+
+			<div class="ambassadorhub-topbar__avatar">
+				<?php if ($profilePicture) : ?>
+					<img src="<?php echo htmlspecialchars($profilePicture, ENT_QUOTES, 'UTF-8'); ?>" alt="">
+				<?php else : ?>
+					<div class="ambassadorhub-topbar__avatar-placeholder"></div>
+				<?php endif; ?>
+			</div>
+		</div>
 
 		<div class="ambassadorhub-topbar__actions">
+			<a class="ambassadorhub-topbar__btn" href="<?php echo $langToggleUrl; ?>">
+				<?php echo $targetLangLabel; ?>
+			</a>
+
 			<button type="button" class="ambassadorhub-topbar__btn" data-ambassadorhub-theme-toggle>
 				<?php echo Text::_('COM_AMBASSADORHUB_TOPBAR_TOGGLE_THEME'); ?>
 			</button>

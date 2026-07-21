@@ -270,6 +270,12 @@ body.com_users.view-login .site-grid .container-component > :first-child {
 	min-width: fit-content;
 }
 
+.ambassadorhub-topbar__user {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+
 .ambassadorhub-topbar__user-text {
 	text-align: right;
 	white-space: nowrap;
@@ -283,6 +289,24 @@ body.com_users.view-login .site-grid .container-component > :first-child {
 .ambassadorhub-topbar__user-role {
 	text-transform: uppercase;
 	color: var(--ash-fg);
+}
+
+.ambassadorhub-topbar__avatar {
+	width: 28px;
+	height: 28px;
+	flex-shrink: 0;
+	border: 1px solid var(--line-dark);
+	border-radius: var(--radius);
+	overflow: hidden;
+	background: var(--ash);
+}
+
+.ambassadorhub-topbar__avatar img,
+.ambassadorhub-topbar__avatar-placeholder {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
 }
 
 .ambassadorhub-topbar__actions {

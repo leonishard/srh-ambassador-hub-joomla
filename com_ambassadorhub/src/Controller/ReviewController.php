@@ -97,6 +97,8 @@ class ReviewController extends BaseController
         $db->setQuery($query);
         $db->execute();
 
+        AmbassadorhubHelper::promoteToGroupManagerRole((int) $proposal->submitted_by);
+
         $query = $db->getQuery(true)
             ->update($db->quoteName('#__ambassadorhub_group_proposals'))
             ->set($db->quoteName('status') . ' = ' . $db->quote('approved'))
@@ -212,6 +214,10 @@ class ReviewController extends BaseController
 
         $db->setQuery($query);
         $db->execute();
+
+        if ($managerId > 0) {
+            AmbassadorhubHelper::promoteToGroupManagerRole($managerId);
+        }
 
         $app->enqueueMessage(Text::_('COM_AMBASSADORHUB_REVIEW_MANAGER_UPDATED'), 'message');
         $this->setRedirect(Route::_('index.php?option=com_ambassadorhub&view=review', false));

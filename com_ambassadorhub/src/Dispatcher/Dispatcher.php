@@ -8,6 +8,8 @@
 namespace SRH\Component\Ambassadorhub\Site\Dispatcher;
 
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
+use Joomla\CMS\Factory;
+use SRH\Component\Ambassadorhub\Site\Helper\AmbassadorhubHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -33,6 +35,35 @@ class Dispatcher extends ComponentDispatcher
             ->useStyle('com_ambassadorhub.frontend')
             ->useScript('com_ambassadorhub.theme-toggle');
 
+        $this->applyLanguagePreference();
+
         parent::dispatch();
+    }
+
+    /**
+     * Ambassador Hub ships its own EN/DE copy independent of the site's overall default
+     * language -- a lightweight per-component switch (cookie-backed) rather than full
+     * Joomla multilingual routing. A `?ah_lang=` request updates the stored preference;
+     * either way, the chosen tag's strings are force-(re)loaded for this component.
+     *
+     * @return  void
+     *
+     * @since   0.1.0
+     */
+    private function applyLanguagePreference(): void
+    {
+        $requested = $this->app->getInput()->getCmd('ah_lang', '');
+
+        if (\in_array($requested, AmbassadorhubHelper::SUPPORTED_LANGUAGE_TAGS, true)) {
+            $this->app->getInput()->cookie->set(
+                AmbassadorhubHelper::LANGUAGE_COOKIE,
+                $requested,
+                ['expires' => time() + 60 * 60 * 24 * 365, 'path' => '/']
+            );
+        }
+
+        $tag = AmbassadorhubHelper::getCurrentLanguageTag();
+
+        Factory::getApplication()->getLanguage()->load('com_ambassadorhub', JPATH_SITE, $tag, true);
     }
 }
