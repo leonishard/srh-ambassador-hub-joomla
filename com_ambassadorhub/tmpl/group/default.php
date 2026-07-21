@@ -34,35 +34,37 @@ $renderEventCard   = function ($event, bool $muted = false) use ($canManageForCa
 	$date = new DateTime($event->event_date);
 	?>
 	<div class="ambassadorhub-card<?php echo $muted ? ' ambassadorhub-card--muted' : ''; ?>">
-		<div class="ambassadorhub-card__poster-wrap">
-			<?php if (!empty($event->poster)) : ?>
-				<img class="ambassadorhub-card__poster" src="<?php echo htmlspecialchars($event->poster, ENT_QUOTES, 'UTF-8'); ?>" alt="">
-			<?php else : ?>
-				<div class="ambassadorhub-card__poster ambassadorhub-card__poster--placeholder"></div>
+		<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=event&id=' . (int) $event->id); ?>" class="ambassadorhub-card__link">
+			<div class="ambassadorhub-card__poster-wrap">
+				<?php if (!empty($event->poster)) : ?>
+					<img class="ambassadorhub-card__poster" src="<?php echo htmlspecialchars($event->poster, ENT_QUOTES, 'UTF-8'); ?>" alt="">
+				<?php else : ?>
+					<div class="ambassadorhub-card__poster ambassadorhub-card__poster--placeholder"></div>
+				<?php endif; ?>
+				<div class="ambassadorhub-card__date">
+					<span class="ambassadorhub-card__date-month ambassadorhub-mono"><?php echo strtoupper($date->format('M')); ?></span>
+					<span class="ambassadorhub-card__date-day ambassadorhub-mono"><?php echo $date->format('d'); ?></span>
+					<span class="ambassadorhub-card__date-time ambassadorhub-mono"><?php echo $date->format('H:i'); ?></span>
+				</div>
+			</div>
+			<div class="ambassadorhub-card__title" style="margin-top: 0.5rem;"><?php echo htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8'); ?></div>
+			<?php if ($event->status !== 'approved') : ?>
+				<div class="ambassadorhub-card__meta">
+					<span class="ambassadorhub-status-tag ambassadorhub-status-tag--<?php echo $event->status; ?>">
+						<?php echo Text::_('COM_AMBASSADORHUB_STATUS_' . strtoupper($event->status)); ?>
+					</span>
+				</div>
 			<?php endif; ?>
-			<div class="ambassadorhub-card__date">
-				<span class="ambassadorhub-card__date-month ambassadorhub-mono"><?php echo strtoupper($date->format('M')); ?></span>
-				<span class="ambassadorhub-card__date-day ambassadorhub-mono"><?php echo $date->format('d'); ?></span>
-				<span class="ambassadorhub-card__date-time ambassadorhub-mono"><?php echo $date->format('H:i'); ?></span>
-			</div>
-		</div>
-		<div class="ambassadorhub-card__title" style="margin-top: 0.5rem;"><?php echo htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8'); ?></div>
-		<?php if ($event->status !== 'approved') : ?>
-			<div class="ambassadorhub-card__meta">
-				<span class="ambassadorhub-status-tag ambassadorhub-status-tag--<?php echo $event->status; ?>">
-					<?php echo Text::_('COM_AMBASSADORHUB_STATUS_' . strtoupper($event->status)); ?>
-				</span>
-			</div>
-		<?php endif; ?>
-		<?php if (!empty($event->description)) : ?>
-			<div class="ambassadorhub-card__description"><?php echo htmlspecialchars($event->description, ENT_QUOTES, 'UTF-8'); ?></div>
-		<?php endif; ?>
-		<?php if (!empty($event->location)) : ?>
-			<div class="ambassadorhub-caption"><?php echo htmlspecialchars($event->location, ENT_QUOTES, 'UTF-8'); ?></div>
-		<?php endif; ?>
+			<?php if (!empty($event->description)) : ?>
+				<div class="ambassadorhub-card__description"><?php echo htmlspecialchars($event->description, ENT_QUOTES, 'UTF-8'); ?></div>
+			<?php endif; ?>
+			<?php if (!empty($event->location)) : ?>
+				<div class="ambassadorhub-caption"><?php echo htmlspecialchars($event->location, ENT_QUOTES, 'UTF-8'); ?></div>
+			<?php endif; ?>
+		</a>
 		<?php if ($canManageForCards) : ?>
 			<div class="ambassadorhub-card__footer">
-				<a class="ambassadorhub-caption" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=event&id=' . (int) $event->id); ?>">
+				<a class="ambassadorhub-caption" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=event&layout=edit&id=' . (int) $event->id); ?>">
 					<?php echo Text::_('COM_AMBASSADORHUB_GROUP_EVENT_EDIT'); ?>
 				</a>
 			</div>
@@ -126,7 +128,7 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 				>
 					<?php echo Text::_('COM_AMBASSADORHUB_POST_NEW_LABEL'); ?>
 				</button>
-				<a class="ambassadorhub-btn ambassadorhub-btn--outline" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=event&group_id=' . (int) $group->id); ?>">
+				<a class="ambassadorhub-btn ambassadorhub-btn--outline" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=event&layout=edit&group_id=' . (int) $group->id); ?>">
 					<?php echo Text::_('COM_AMBASSADORHUB_EVENT_ADD'); ?>
 				</a>
 			<?php endif; ?>

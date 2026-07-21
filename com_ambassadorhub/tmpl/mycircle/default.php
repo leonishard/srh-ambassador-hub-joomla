@@ -145,7 +145,7 @@ echo AmbassadorhubHelper::renderTopbar('mycircle');
 						<?php else : ?>
 							<div class="ambassadorhub-my-circle__event-list">
 								<?php foreach ($this->attendingEvents as $event) : ?>
-									<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=group&id=' . (int) $event->group_id); ?>" class="ambassadorhub-event-row">
+									<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=event&id=' . (int) $event->id); ?>" class="ambassadorhub-event-row">
 										<div class="ambassadorhub-event-row__date ambassadorhub-mono">
 											<span><?php echo $formatEventDate($event->event_date); ?></span>
 											<span class="ambassadorhub-event-row__time"><?php echo $formatEventTime($event->event_date); ?></span>

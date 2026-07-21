@@ -99,54 +99,54 @@ echo AmbassadorhubHelper::renderTopbar('events');
 				$date        = new DateTime($event->event_date);
 				?>
 				<div class="ambassadorhub-card">
-					<div class="ambassadorhub-card__poster-wrap">
-						<?php if (!empty($event->poster)) : ?>
-							<img class="ambassadorhub-card__poster" src="<?php echo $this->escape($event->poster); ?>" alt="">
-						<?php else : ?>
-							<div class="ambassadorhub-card__poster ambassadorhub-card__poster--placeholder"></div>
-						<?php endif; ?>
+					<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=event&id=' . (int) $event->id); ?>" class="ambassadorhub-card__link">
+						<div class="ambassadorhub-card__poster-wrap">
+							<?php if (!empty($event->poster)) : ?>
+								<img class="ambassadorhub-card__poster" src="<?php echo $this->escape($event->poster); ?>" alt="">
+							<?php else : ?>
+								<div class="ambassadorhub-card__poster ambassadorhub-card__poster--placeholder"></div>
+							<?php endif; ?>
 
-						<div class="ambassadorhub-card__date">
-							<span class="ambassadorhub-card__date-month ambassadorhub-mono"><?php echo strtoupper($date->format('M')); ?></span>
-							<span class="ambassadorhub-card__date-day ambassadorhub-mono"><?php echo $date->format('d'); ?></span>
-							<span class="ambassadorhub-card__date-time ambassadorhub-mono"><?php echo $date->format('H:i'); ?></span>
+							<div class="ambassadorhub-card__date">
+								<span class="ambassadorhub-card__date-month ambassadorhub-mono"><?php echo strtoupper($date->format('M')); ?></span>
+								<span class="ambassadorhub-card__date-day ambassadorhub-mono"><?php echo $date->format('d'); ?></span>
+								<span class="ambassadorhub-card__date-time ambassadorhub-mono"><?php echo $date->format('H:i'); ?></span>
+							</div>
 						</div>
-					</div>
 
-					<div class="ambassadorhub-card__title" style="margin-top: 0.5rem;"><?php echo $this->escape($event->title); ?></div>
+						<div class="ambassadorhub-card__title" style="margin-top: 0.5rem;"><?php echo $this->escape($event->title); ?></div>
 
-					<div class="ambassadorhub-card__meta ambassadorhub-caption">
-						<?php if (!empty($event->status) && $event->status !== 'approved') : ?>
-							<span class="ambassadorhub-status-tag <?php echo $statusClasses[$event->status] ?? ''; ?>">
-								<?php echo Text::_('COM_AMBASSADORHUB_STATUS_' . strtoupper($event->status)); ?>
-							</span>
+						<div class="ambassadorhub-card__meta ambassadorhub-caption">
+							<?php if (!empty($event->status) && $event->status !== 'approved') : ?>
+								<span class="ambassadorhub-status-tag <?php echo $statusClasses[$event->status] ?? ''; ?>">
+									<?php echo Text::_('COM_AMBASSADORHUB_STATUS_' . strtoupper($event->status)); ?>
+								</span>
+							<?php endif; ?>
+							<?php if (!empty($event->category)) : ?>
+								<span><?php echo $this->escape($event->category); ?></span>
+							<?php endif; ?>
+							<span><?php echo $this->escape($event->group_name); ?></span>
+						</div>
+
+						<?php if (!empty($event->description)) : ?>
+							<div class="ambassadorhub-card__description"><?php echo nl2br($this->escape($event->description)); ?></div>
 						<?php endif; ?>
-						<?php if (!empty($event->category)) : ?>
-							<span><?php echo $this->escape($event->category); ?></span>
+
+						<?php if (!empty($event->location)) : ?>
+							<div class="ambassadorhub-caption"><?php echo $this->escape($event->location); ?></div>
 						<?php endif; ?>
-						<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=group&id=' . (int) $event->group_id); ?>">
-							<?php echo $this->escape($event->group_name); ?>
-						</a>
-					</div>
 
-					<?php if (!empty($event->description)) : ?>
-						<div class="ambassadorhub-card__description"><?php echo nl2br($this->escape($event->description)); ?></div>
-					<?php endif; ?>
-
-					<?php if (!empty($event->location)) : ?>
-						<div class="ambassadorhub-caption"><?php echo $this->escape($event->location); ?></div>
-					<?php endif; ?>
-
-					<?php if (!empty($event->host_name)) : ?>
-						<div class="ambassadorhub-caption"><?php echo Text::sprintf('COM_AMBASSADORHUB_EVENTS_HOSTED_BY', $this->escape($event->host_name)); ?></div>
-					<?php endif; ?>
-
-					<div class="ambassadorhub-caption ambassadorhub-card__interested">
-						<?php echo Text::plural('COM_AMBASSADORHUB_EVENT_N_INTERESTED', (int) $event->attendee_count); ?>
-						<?php if (!empty($event->attendee_names)) : ?>
-							&mdash; <?php echo $this->escape(implode(', ', $event->attendee_names)); ?>
+						<?php if (!empty($event->host_name)) : ?>
+							<div class="ambassadorhub-caption"><?php echo Text::sprintf('COM_AMBASSADORHUB_EVENTS_HOSTED_BY', $this->escape($event->host_name)); ?></div>
 						<?php endif; ?>
-					</div>
+
+						<div class="ambassadorhub-caption ambassadorhub-card__interested">
+							<?php echo Text::plural('COM_AMBASSADORHUB_EVENT_N_INTERESTED', (int) $event->attendee_count); ?>
+							<?php if (!empty($event->attendee_names)) : ?>
+								&mdash; <?php echo $this->escape(implode(', ', $event->attendee_names)); ?>
+							<?php endif; ?>
+						</div>
+					</a>
 
 					<div class="ambassadorhub-card__footer">
 						<?php if ($user->guest) : ?>

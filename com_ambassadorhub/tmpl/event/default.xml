@@ -2,7 +2,7 @@
 <metadata>
 	<layout hidden="true">
 		<message>
-			<![CDATA[Not a menu item -- this is the Event create/edit form, reached from a Group's page.]]>
+			<![CDATA[Not a menu item -- this is the public Event detail page, reached by clicking an Event card anywhere in the app.]]>
 		</message>
 	</layout>
 </metadata>

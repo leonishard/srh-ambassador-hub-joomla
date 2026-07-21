@@ -121,6 +121,18 @@ body.com_users.view-login .site-grid .container-component {
 body.com_ambassadorhub main,
 body.com_users.view-login main {
 	padding: 0 !important;
+	margin: 0 !important;
+}
+
+/*
+ * Cassiopeia's own template.css applies `margin-top: 1em` to the first child of
+ * .container-component (a generic "add breathing room under the breadcrumbs"
+ * rule) -- with no breadcrumbs/main-top module published, <main> ends up being
+ * that first child, pushing our full-bleed topbar down by 1em. Overridden here.
+ */
+body.com_ambassadorhub .site-grid .container-component > :first-child,
+body.com_users.view-login .site-grid .container-component > :first-child {
+	margin-top: 0 !important;
 }
 
 .ambassadorhub {
