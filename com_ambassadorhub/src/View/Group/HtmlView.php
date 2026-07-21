@@ -14,6 +14,7 @@ use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use SRH\Component\Ambassadorhub\Site\Helper\AmbassadorhubHelper;
 use SRH\Component\Ambassadorhub\Site\Model\GroupModel;
+use SRH\Component\Ambassadorhub\Site\Model\PostsModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -64,6 +65,30 @@ class HtmlView extends BaseHtmlView
     protected $pastEvents = [];
 
     /**
+     * @var  object[]
+     * @since  0.1.0
+     */
+    protected $pendingEvents = [];
+
+    /**
+     * @var  object[]
+     * @since  0.1.0
+     */
+    protected $members = [];
+
+    /**
+     * @var  object[]
+     * @since  0.1.0
+     */
+    protected $posts = [];
+
+    /**
+     * @var  integer|null
+     * @since  0.1.0
+     */
+    protected $currentStudentId;
+
+    /**
      * Display the view.
      *
      * @param   string  $tpl  The template file to include.
@@ -85,9 +110,9 @@ class HtmlView extends BaseHtmlView
             throw new GenericDataException(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
         }
 
-        $this->item      = $item;
-        $this->canManage = AmbassadorhubHelper::canManageGroup($id);
-        $this->isCoordinator = $app->getIdentity()->authorise('ambassadorhub.review', 'com_ambassadorhub');
+        $this->item           = $item;
+        $this->canManage      = AmbassadorhubHelper::canManageGroup($id);
+        $this->isCoordinator  = $app->getIdentity()->authorise('ambassadorhub.review', 'com_ambassadorhub');
 
         if ($this->getLayout() === 'edit' && !$this->canManage) {
             throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
@@ -96,13 +121,22 @@ class HtmlView extends BaseHtmlView
         $user = $app->getIdentity();
 
         if (!$user->guest) {
-            $studentId      = AmbassadorhubHelper::getStudentId((int) $user->id);
-            $this->isMember = $model->isMember($id, $studentId);
+            $this->currentStudentId = AmbassadorhubHelper::getStudentId((int) $user->id);
+            $this->isMember         = $model->isMember($id, $this->currentStudentId);
         }
 
         $events               = $model->getEvents($id, $this->canManage);
         $this->upcomingEvents = $events['upcoming'];
         $this->pastEvents     = $events['past'];
+        $this->pendingEvents  = $events['pending'];
+        $this->members        = $model->getMembers($id);
+
+        $postsModel  = new PostsModel();
+        $this->posts = $postsModel->getForGroup($id);
+
+        foreach ($this->posts as $post) {
+            $post->comments = $postsModel->getComments((int) $post->id);
+        }
 
         $app->getDocument()->setTitle($item->name);
 

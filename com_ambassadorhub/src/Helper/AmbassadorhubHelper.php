@@ -174,6 +174,38 @@ class AmbassadorhubHelper
     }
 
     /**
+     * Whether the given Student belongs to the given Group (used to gate commenting --
+     * only members may comment on a Group's Posts, per spec).
+     *
+     * @param   integer|null  $groupId    The Group id.
+     * @param   integer|null  $studentId  The Student id.
+     *
+     * @return  boolean
+     *
+     * @since   0.1.0
+     */
+    public static function isGroupMember(?int $groupId, ?int $studentId): bool
+    {
+        if (!$groupId || !$studentId) {
+            return false;
+        }
+
+        /** @var DatabaseInterface $db */
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select('1')
+            ->from($db->quoteName('#__ambassadorhub_group_members'))
+            ->where($db->quoteName('group_id') . ' = :groupId')
+            ->where($db->quoteName('student_id') . ' = :studentId')
+            ->bind(':groupId', $groupId, ParameterType::INTEGER)
+            ->bind(':studentId', $studentId, ParameterType::INTEGER);
+
+        $db->setQuery($query);
+
+        return (bool) $db->loadResult();
+    }
+
+    /**
      * Renders the shared topbar (brand, nav, auth state, theme toggle) used across every
      * Ambassador Hub page in place of Joomla's default template chrome, which is hidden
      * for this component via CSS.

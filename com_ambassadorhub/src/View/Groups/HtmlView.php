@@ -11,6 +11,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use SRH\Component\Ambassadorhub\Site\Helper\AmbassadorhubHelper;
+use SRH\Component\Ambassadorhub\Site\Model\GroupProposalsModel;
 use SRH\Component\Ambassadorhub\Site\Model\GroupsModel;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -49,6 +50,12 @@ class HtmlView extends BaseHtmlView
     protected $joinedGroupIds = [];
 
     /**
+     * @var  object[]
+     * @since  0.1.0
+     */
+    protected $myProposals = [];
+
+    /**
      * Display the view.
      *
      * @param   string  $tpl  The template file to include.
@@ -69,6 +76,11 @@ class HtmlView extends BaseHtmlView
         if (!$user->guest) {
             $studentId            = AmbassadorhubHelper::getStudentId((int) $user->id);
             $this->joinedGroupIds = $model->getJoinedGroupIds($studentId);
+
+            if ($studentId) {
+                $proposalsModel    = new GroupProposalsModel();
+                $this->myProposals = $proposalsModel->getForStudent($studentId);
+            }
         }
 
         Factory::getApplication()->getDocument()->setTitle(Text::_('COM_AMBASSADORHUB_PAGE_GROUPS'));

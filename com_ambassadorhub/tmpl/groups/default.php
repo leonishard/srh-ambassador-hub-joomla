@@ -22,12 +22,52 @@ $user = Factory::getApplication()->getIdentity();
 echo AmbassadorhubHelper::renderTopbar('groups');
 ?>
 <div class="ambassadorhub ambassadorhub-page">
-	<h1><?php echo Text::_('COM_AMBASSADORHUB_PAGE_GROUPS'); ?></h1>
-	<p class="ambassadorhub-caption"><?php echo Text::_('COM_AMBASSADORHUB_GROUPS_SUBTITLE'); ?></p>
+	<div class="ambassadorhub-groups-header">
+		<div>
+			<h1><?php echo Text::_('COM_AMBASSADORHUB_PAGE_GROUPS'); ?></h1>
+			<p class="ambassadorhub-caption"><?php echo Text::_('COM_AMBASSADORHUB_GROUPS_SUBTITLE'); ?></p>
+		</div>
+		<?php if (!$user->guest) : ?>
+			<button
+				type="button"
+				class="ambassadorhub-btn"
+				data-ambassadorhub-toggle="propose-group-panel"
+				data-label-show="<?php echo $this->escape(Text::_('COM_AMBASSADORHUB_GROUPS_NEW_GROUP')); ?>"
+				data-label-hide="<?php echo $this->escape(Text::_('COM_AMBASSADORHUB_CANCEL')); ?>"
+			>
+				<?php echo Text::_('COM_AMBASSADORHUB_GROUPS_NEW_GROUP'); ?>
+			</button>
+		<?php endif; ?>
+	</div>
 
-	<p class="ambassadorhub-caption" style="margin-top: 1rem;">
-		<?php echo Text::_('COM_AMBASSADORHUB_GROUPS_PROPOSE_COMING_SOON'); ?>
-	</p>
+	<?php if (!$user->guest) : ?>
+		<section id="propose-group-panel" hidden>
+			<h2><?php echo Text::_('COM_AMBASSADORHUB_GROUPS_PROPOSE_TITLE'); ?></h2>
+			<form class="ambassadorhub-inline-form" action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=groupproposal.save'); ?>" method="post">
+				<label for="proposal-name"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_NAME_LABEL'); ?></label>
+				<input type="text" id="proposal-name" name="name" required>
+
+				<label for="proposal-category"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_CATEGORY_LABEL'); ?></label>
+				<input type="text" id="proposal-category" name="category">
+
+				<label for="proposal-description"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_DESCRIPTION_LABEL'); ?></label>
+				<textarea id="proposal-description" name="description" rows="3"></textarea>
+
+				<label for="proposal-profile-picture"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_PROFILE_PICTURE_LABEL'); ?></label>
+				<input type="text" id="proposal-profile-picture" name="profile_picture" placeholder="https://...">
+
+				<label for="proposal-cover-image"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_COVER_IMAGE_LABEL'); ?></label>
+				<input type="text" id="proposal-cover-image" name="cover_image" placeholder="https://...">
+
+				<button type="submit" class="ambassadorhub-btn"><?php echo Text::_('COM_AMBASSADORHUB_GROUPS_PROPOSE_SUBMIT'); ?></button>
+				<?php echo HTMLHelper::_('form.token'); ?>
+			</form>
+		</section>
+	<?php else : ?>
+		<p class="ambassadorhub-caption" style="margin-top: 1rem;">
+			<?php echo Text::_('COM_AMBASSADORHUB_GROUPS_PROPOSE_LOGIN_PROMPT'); ?>
+		</p>
+	<?php endif; ?>
 
 	<?php if (empty($this->items)) : ?>
 		<p><?php echo Text::_('COM_AMBASSADORHUB_GROUPS_NONE'); ?></p>
@@ -42,6 +82,8 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 					<a href="<?php echo $detailUrl; ?>" class="ambassadorhub-card__link">
 						<?php if ($imageUrl) : ?>
 							<img class="ambassadorhub-card__poster" src="<?php echo $this->escape($imageUrl); ?>" alt="">
+						<?php else : ?>
+							<div class="ambassadorhub-card__poster ambassadorhub-card__poster--placeholder"></div>
 						<?php endif; ?>
 						<div class="ambassadorhub-card__title"><?php echo $this->escape($group->name); ?></div>
 						<div class="ambassadorhub-card__meta ambassadorhub-caption">
@@ -58,7 +100,7 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 
 					<div class="ambassadorhub-card__footer">
 						<?php if ($user->guest) : ?>
-							<a class="ambassadorhub-btn ambassadorhub-btn--outline" href="<?php echo Route::_('index.php?option=com_users&view=login'); ?>">
+							<a class="ambassadorhub-btn ambassadorhub-btn--outline" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=login'); ?>">
 								<?php echo Text::_('COM_AMBASSADORHUB_GROUP_LOGIN_TO_JOIN'); ?>
 							</a>
 						<?php elseif ($isMember) : ?>
@@ -80,5 +122,21 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 		</div>
 
 		<?php echo $this->pagination->getListFooter(); ?>
+	<?php endif; ?>
+
+	<?php if (!empty($this->myProposals)) : ?>
+		<section style="margin-top: 3rem;">
+			<h2 class="ambassadorhub-mono" style="font-size: 0.8125rem; color: var(--ash-fg); letter-spacing: 0.06em;">
+				<?php echo Text::_('COM_AMBASSADORHUB_GROUPS_YOUR_PROPOSALS'); ?>
+			</h2>
+			<?php foreach ($this->myProposals as $proposal) : ?>
+				<div class="ambassadorhub-group-detail__event-row">
+					<span><?php echo $this->escape($proposal->name); ?></span>
+					<span class="ambassadorhub-status-tag ambassadorhub-status-tag--<?php echo $proposal->status; ?>">
+						<?php echo Text::_('COM_AMBASSADORHUB_STATUS_' . strtoupper($proposal->status)); ?>
+					</span>
+				</div>
+			<?php endforeach; ?>
+		</section>
 	<?php endif; ?>
 </div>

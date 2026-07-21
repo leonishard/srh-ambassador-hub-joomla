@@ -59,7 +59,7 @@ class EventsModel extends ListModel
         $this->setState('filter.group_id', $app->getInput()->getInt('filter_group_id', 0));
         $this->setState('filter.category', $app->getInput()->getString('filter_category', ''));
         $this->setState('filter.host', $app->getInput()->getInt('filter_host', 0));
-        $this->setState('filter.upcoming_only', $app->getInput()->getBool('filter_upcoming_only', true));
+        $this->setState('filter.time_scope', $app->getInput()->getCmd('filter_time_scope', 'all'));
 
         parent::populateState($ordering, $direction);
     }
@@ -90,9 +90,12 @@ class EventsModel extends ListModel
                 ]
             )
             ->select($db->quoteName('g.name', 'group_name'))
+            ->select($db->quoteName('hu.name', 'host_name'))
             ->select('(SELECT COUNT(*) FROM ' . $db->quoteName('#__ambassadorhub_event_attendees') . ' ea WHERE ea.event_id = a.id) AS attendee_count')
             ->from($db->quoteName('#__ambassadorhub_events', 'a'))
             ->join('INNER', $db->quoteName('#__ambassadorhub_groups', 'g'), $db->quoteName('g.id') . ' = ' . $db->quoteName('a.group_id'))
+            ->join('LEFT', $db->quoteName('#__ambassadorhub_students', 'hs'), $db->quoteName('hs.id') . ' = ' . $db->quoteName('a.submitted_by'))
+            ->join('LEFT', $db->quoteName('#__users', 'hu'), $db->quoteName('hu.id') . ' = ' . $db->quoteName('hs.user_id'))
             ->where($db->quoteName('g.state') . ' = 1');
 
         // Visibility: everyone sees approved Events; a signed-in Student also sees pending/
@@ -138,7 +141,7 @@ class EventsModel extends ListModel
                 ->bind(':hostId', $hostId, ParameterType::INTEGER);
         }
 
-        if ($this->getState('filter.upcoming_only')) {
+        if ($this->getState('filter.time_scope') === 'upcoming') {
             $now = Factory::getDate()->toSql();
             $query->where($db->quoteName('a.event_date') . ' >= :now')
                 ->bind(':now', $now);
@@ -149,6 +152,60 @@ class EventsModel extends ListModel
         $query->order($db->quoteName($orderCol) . ' ' . $orderDirn);
 
         return $query;
+    }
+
+    /**
+     * Returns published Groups that currently host at least one visible Event, for the
+     * "filter by Group" dropdown.
+     *
+     * @return  array
+     *
+     * @since   0.1.0
+     */
+    public function getGroupOptions(): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select([$db->quoteName('g.id'), $db->quoteName('g.name')])
+            ->from($db->quoteName('#__ambassadorhub_groups', 'g'))
+            ->where($db->quoteName('g.state') . ' = 1')
+            ->where(
+                'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__ambassadorhub_events') . ' e WHERE '
+                . $db->quoteName('e.group_id') . ' = ' . $db->quoteName('g.id')
+                . ' AND ' . $db->quoteName('e.status') . ' = ' . $db->quote('approved') . ')'
+            )
+            ->order($db->quoteName('g.name') . ' ASC');
+
+        $db->setQuery($query);
+
+        return $db->loadObjectList() ?: [];
+    }
+
+    /**
+     * Returns Students who have submitted at least one approved Event, for the
+     * "filter by Host" dropdown.
+     *
+     * @return  array
+     *
+     * @since   0.1.0
+     */
+    public function getHostOptions(): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select([$db->quoteName('s.id'), $db->quoteName('u.name')])
+            ->from($db->quoteName('#__ambassadorhub_students', 's'))
+            ->join('INNER', $db->quoteName('#__users', 'u'), $db->quoteName('u.id') . ' = ' . $db->quoteName('s.user_id'))
+            ->where(
+                'EXISTS (SELECT 1 FROM ' . $db->quoteName('#__ambassadorhub_events') . ' e WHERE '
+                . $db->quoteName('e.submitted_by') . ' = ' . $db->quoteName('s.id')
+                . ' AND ' . $db->quoteName('e.status') . ' = ' . $db->quote('approved') . ')'
+            )
+            ->order($db->quoteName('u.name') . ' ASC');
+
+        $db->setQuery($query);
+
+        return $db->loadObjectList() ?: [];
     }
 
     /**

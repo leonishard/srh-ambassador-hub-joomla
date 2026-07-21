@@ -55,7 +55,9 @@ if (!$user->guest && $user->authorise('ambassadorhub.review', 'com_ambassadorhub
 			</span>
 		<?php else : ?>
 			<span class="ambassadorhub-topbar__user-text">
-				<span><?php echo htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8'); ?></span>
+				<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=profile'); ?>">
+					<?php echo htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8'); ?>
+				</a>
 			</span>
 		<?php endif; ?>
 
@@ -65,14 +67,14 @@ if (!$user->guest && $user->authorise('ambassadorhub.review', 'com_ambassadorhub
 			</button>
 
 			<?php if ($user->guest) : ?>
-				<a class="ambassadorhub-topbar__btn" href="<?php echo Route::_('index.php?option=com_users&view=login'); ?>">
+				<a class="ambassadorhub-topbar__btn" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=login'); ?>">
 					<?php echo Text::_('COM_AMBASSADORHUB_TOPBAR_SIGN_IN'); ?>
 				</a>
 			<?php else : ?>
 				<form action="<?php echo Route::_('index.php', true); ?>" method="post" class="ambassadorhub-topbar__logout-form">
 					<input type="hidden" name="option" value="com_users">
 					<input type="hidden" name="task" value="user.logout">
-					<input type="hidden" name="return" value="<?php echo base64_encode(Route::_('index.php?option=com_ambassadorhub&view=home', false)); ?>">
+					<input type="hidden" name="return" value="<?php echo base64_encode(Route::_('index.php?option=com_ambassadorhub&view=home', false, Route::TLS_IGNORE, true)); ?>">
 					<?php echo HTMLHelper::_('form.token'); ?>
 					<button type="submit" class="ambassadorhub-topbar__btn">
 						<?php echo Text::_('COM_AMBASSADORHUB_TOPBAR_LOG_OUT'); ?>

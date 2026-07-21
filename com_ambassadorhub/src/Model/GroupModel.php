@@ -105,14 +105,14 @@ class GroupModel extends BaseDatabaseModel
     }
 
     /**
-     * Fetches a Group's Events, split into upcoming and past. Approved Events are always
-     * included; the Group's manager or a Coordinator also sees pending/rejected ones so
-     * they can track their own submissions.
+     * Fetches a Group's Events, split into upcoming/past (approved only) and pending
+     * (only populated when $includeAll is true, i.e. for that Group's manager or a
+     * Coordinator, who need to track their own submissions awaiting a decision).
      *
-     * @param   integer  $groupId       The Group id.
-     * @param   boolean  $includeAll    Whether to include non-approved Events too.
+     * @param   integer  $groupId     The Group id.
+     * @param   boolean  $includeAll  Whether to also fetch pending/rejected Events.
      *
-     * @return  array{upcoming: object[], past: object[]}
+     * @return  array{upcoming: object[], past: object[], pending: object[]}
      *
      * @since   0.1.0
      */
@@ -124,9 +124,11 @@ class GroupModel extends BaseDatabaseModel
                 [
                     $db->quoteName('id'),
                     $db->quoteName('title'),
+                    $db->quoteName('description'),
                     $db->quoteName('event_date'),
                     $db->quoteName('location'),
                     $db->quoteName('category'),
+                    $db->quoteName('poster'),
                     $db->quoteName('status'),
                 ]
             )
@@ -136,18 +138,27 @@ class GroupModel extends BaseDatabaseModel
             ->bind(':groupId', $groupId, ParameterType::INTEGER)
             ->order($db->quoteName('event_date') . ' ASC');
 
-        if (!$includeAll) {
-            $query->where($db->quoteName('status') . ' = ' . $db->quote('approved'));
-        }
-
         $db->setQuery($query);
         $events = $db->loadObjectList() ?: [];
 
         $now      = Factory::getDate()->toSql();
         $upcoming = [];
         $past     = [];
+        $pending  = [];
 
         foreach ($events as $event) {
+            if ($event->status === 'pending') {
+                if ($includeAll) {
+                    $pending[] = $event;
+                }
+
+                continue;
+            }
+
+            if ($event->status !== 'approved') {
+                continue;
+            }
+
             if ($event->event_date >= $now) {
                 $upcoming[] = $event;
             } else {
@@ -155,6 +166,32 @@ class GroupModel extends BaseDatabaseModel
             }
         }
 
-        return ['upcoming' => $upcoming, 'past' => $past];
+        return ['upcoming' => $upcoming, 'past' => $past, 'pending' => $pending];
+    }
+
+    /**
+     * Fetches a Group's members' display names, for the sidebar member list.
+     *
+     * @param   integer  $groupId  The Group id.
+     *
+     * @return  object[]
+     *
+     * @since   0.1.0
+     */
+    public function getMembers(int $groupId): array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select([$db->quoteName('s.id'), $db->quoteName('u.name')])
+            ->from($db->quoteName('#__ambassadorhub_group_members', 'gm'))
+            ->join('INNER', $db->quoteName('#__ambassadorhub_students', 's'), $db->quoteName('s.id') . ' = ' . $db->quoteName('gm.student_id'))
+            ->join('INNER', $db->quoteName('#__users', 'u'), $db->quoteName('u.id') . ' = ' . $db->quoteName('s.user_id'))
+            ->where($db->quoteName('gm.group_id') . ' = :groupId')
+            ->bind(':groupId', $groupId, ParameterType::INTEGER)
+            ->order($db->quoteName('u.name') . ' ASC');
+
+        $db->setQuery($query);
+
+        return $db->loadObjectList() ?: [];
     }
 }

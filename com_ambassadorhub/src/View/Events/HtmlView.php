@@ -46,13 +46,25 @@ class HtmlView extends BaseHtmlView
      * @var  array
      * @since  0.1.0
      */
+    protected $groupOptions = [];
+
+    /**
+     * @var  array
+     * @since  0.1.0
+     */
+    protected $hostOptions = [];
+
+    /**
+     * @var  array
+     * @since  0.1.0
+     */
     protected $attendingEventIds = [];
 
     /**
-     * @var  boolean
+     * @var  string  "all" or "upcoming".
      * @since  0.1.0
      */
-    protected $upcomingOnly = true;
+    protected $timeScope = 'all';
 
     /**
      * Display the view.
@@ -66,10 +78,12 @@ class HtmlView extends BaseHtmlView
         /** @var EventsModel $model */
         $model = $this->getModel();
 
-        $this->items       = $model->getItems();
+        $this->items        = $model->getItems();
         $this->pagination   = $model->getPagination();
         $this->categories   = $model->getCategories();
-        $this->upcomingOnly = (bool) $model->getState('filter.upcoming_only');
+        $this->groupOptions = $model->getGroupOptions();
+        $this->hostOptions  = $model->getHostOptions();
+        $this->timeScope    = (string) $model->getState('filter.time_scope');
 
         foreach ($this->items as $item) {
             $item->attendee_names = $model->getAttendeeNames((int) $item->id);

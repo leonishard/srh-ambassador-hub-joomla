@@ -29,7 +29,7 @@ echo AmbassadorhubHelper::renderTopbar('home');
 
 			<div class="ambassadorhub-home__actions">
 				<?php if ($user->guest) : ?>
-					<a class="ambassadorhub-btn" href="<?php echo Route::_('index.php?option=com_users&view=login'); ?>">
+					<a class="ambassadorhub-btn" href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=login'); ?>">
 						<?php echo Text::_('COM_AMBASSADORHUB_HOME_CTA_GUEST'); ?>
 					</a>
 				<?php else : ?>
