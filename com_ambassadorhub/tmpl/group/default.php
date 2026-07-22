@@ -168,12 +168,12 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 			<?php endif; ?>
 
 			<?php if ($this->canManage) : ?>
-				<form id="new-post-panel" class="ambassadorhub-inline-form" action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=post.save'); ?>" method="post" hidden>
+				<form id="new-post-panel" class="ambassadorhub-inline-form" action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=post.save'); ?>" method="post" enctype="multipart/form-data" hidden>
 					<input type="hidden" name="group_id" value="<?php echo (int) $group->id; ?>">
 					<label for="post-content"><?php echo Text::_('COM_AMBASSADORHUB_POST_NEW_LABEL'); ?></label>
 					<textarea id="post-content" name="content" rows="3" placeholder="<?php echo $this->escape(Text::_('COM_AMBASSADORHUB_POST_PLACEHOLDER')); ?>" required></textarea>
 					<label for="post-media"><?php echo Text::_('COM_AMBASSADORHUB_POST_MEDIA_LABEL'); ?></label>
-					<input type="text" id="post-media" name="media" placeholder="https://...">
+					<input type="file" id="post-media" name="media" accept="image/*">
 					<button type="submit" class="ambassadorhub-btn"><?php echo Text::_('COM_AMBASSADORHUB_POST_SUBMIT'); ?></button>
 					<?php echo HTMLHelper::_('form.token'); ?>
 				</form>

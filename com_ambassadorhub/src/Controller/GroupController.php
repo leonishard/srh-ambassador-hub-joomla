@@ -151,8 +151,8 @@ class GroupController extends BaseController
         $table->name            = $input->getString('name', $table->name);
         $table->category        = $input->getString('category', $table->category);
         $table->description     = $input->get('description', $table->description, 'RAW');
-        $table->cover_image     = $input->getString('cover_image', $table->cover_image);
-        $table->profile_picture = $input->getString('profile_picture', $table->profile_picture);
+        $table->cover_image     = AmbassadorhubHelper::processImageUpload('cover_image', $table->cover_image);
+        $table->profile_picture = AmbassadorhubHelper::processImageUpload('profile_picture', $table->profile_picture);
 
         if (!$table->check() || !$table->store()) {
             $app->enqueueMessage($table->getError(), 'error');

@@ -53,7 +53,7 @@ class PostController extends BaseController
 
         $user      = $app->getIdentity();
         $studentId = AmbassadorhubHelper::getOrCreateStudentId((int) $user->id);
-        $media     = $input->getString('media', '');
+        $media     = AmbassadorhubHelper::processImageUpload('media', '') ?? '';
         $now       = Factory::getDate()->toSql();
 
         /** @var DatabaseInterface $db */

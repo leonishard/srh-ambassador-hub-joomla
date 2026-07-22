@@ -14,7 +14,6 @@
  * @var \Joomla\Component\Users\Site\View\Login\HtmlView $this
  */
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -25,9 +24,12 @@ use SRH\Component\Ambassadorhub\Site\Helper\AmbassadorhubHelper;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-// This view lives outside com_ambassadorhub, so its language file isn't
-// auto-loaded the way it would be when our own component is dispatching.
-Factory::getLanguage()->load('com_ambassadorhub', JPATH_SITE);
+// This view lives outside com_ambassadorhub, so its language file isn't auto-loaded
+// the way it would be when our own component is dispatching -- and since our own
+// Dispatcher (which normally applies the visitor's chosen ah_lang cookie, and handles
+// an incoming language-toggle click) never runs for this com_users view either, that
+// has to be done here too.
+AmbassadorhubHelper::applyLanguagePreference();
 
 // A failed login on our own page arrives here with no "return" carried over
 // (core's failure redirect doesn't forward one), so fall back to Ambassador Hub
@@ -47,12 +49,15 @@ $quickLoginGroups = [
         ['name' => 'Ben Fischer', 'username' => 'ben.fischer'],
         ['name' => 'Carla Weber', 'username' => 'carla.weber'],
         ['name' => 'Diego Alvarez', 'username' => 'diego.alvarez'],
-    ],
-    'COM_AMBASSADORHUB_LOGIN_QUICK_STUDENTS' => [
         ['name' => 'Elena Rossi', 'username' => 'elena.rossi'],
         ['name' => 'Finn Becker', 'username' => 'finn.becker'],
         ['name' => 'Grace Adeyemi', 'username' => 'grace.adeyemi'],
         ['name' => 'Hassan Ali', 'username' => 'hassan.ali'],
+    ],
+    'COM_AMBASSADORHUB_LOGIN_QUICK_STUDENTS' => [
+        ['name' => 'Mia Chen', 'username' => 'mia.chen'],
+        ['name' => 'Omar Farouk', 'username' => 'omar.farouk'],
+        ['name' => 'Sophie Turner', 'username' => 'sophie.turner'],
     ],
 ];
 ?>

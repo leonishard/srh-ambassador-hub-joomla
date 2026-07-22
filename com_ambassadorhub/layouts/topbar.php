@@ -72,6 +72,9 @@ if (!$user->guest && $user->authorise('ambassadorhub.review', 'com_ambassadorhub
 					<a href="<?php echo Route::_('index.php?option=com_ambassadorhub&view=profile'); ?>">
 						<?php echo htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8'); ?>
 					</a>
+					<span class="ambassadorhub-topbar__user-role ambassadorhub-topbar__user-role--active">
+						<?php echo Text::_(AmbassadorhubHelper::getCurrentUserRoleLabelKey()); ?>
+					</span>
 				</span>
 			<?php endif; ?>
 

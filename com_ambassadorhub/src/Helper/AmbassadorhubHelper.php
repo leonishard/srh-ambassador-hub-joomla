@@ -8,6 +8,8 @@
 namespace SRH\Component\Ambassadorhub\Site\Helper;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -175,6 +177,45 @@ class AmbassadorhubHelper
     }
 
     /**
+     * The current signed-in user's role, as a language key -- for the topbar's
+     * name-and-role display. One of Coordinator / Group Manager / Student, in that
+     * priority order (a Coordinator who also manages a Group is shown as Coordinator).
+     *
+     * @return  string
+     *
+     * @since   0.1.0
+     */
+    public static function getCurrentUserRoleLabelKey(): string
+    {
+        $user = Factory::getApplication()->getIdentity();
+
+        if ($user->guest) {
+            return 'COM_AMBASSADORHUB_ROLE_STUDENT';
+        }
+
+        if ($user->authorise('ambassadorhub.review', 'com_ambassadorhub')) {
+            return 'COM_AMBASSADORHUB_ROLE_COORDINATOR';
+        }
+
+        /** @var DatabaseInterface $db */
+        $db    = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select('1')
+            ->from($db->quoteName('#__usergroups', 'g'))
+            ->join('INNER', $db->quoteName('#__user_usergroup_map', 'm'), $db->quoteName('m.group_id') . ' = ' . $db->quoteName('g.id'))
+            ->where($db->quoteName('m.user_id') . ' = :userId')
+            ->where($db->quoteName('g.title') . ' = ' . $db->quote('Group Manager'))
+            ->bind(':userId', $user->id, ParameterType::INTEGER);
+        $db->setQuery($query);
+
+        if ($db->loadResult()) {
+            return 'COM_AMBASSADORHUB_ROLE_GROUP_MANAGER';
+        }
+
+        return 'COM_AMBASSADORHUB_ROLE_STUDENT';
+    }
+
+    /**
      * Whether the given Student belongs to the given Group (used to gate commenting --
      * only members may comment on a Group's Posts, per spec).
      *
@@ -314,6 +355,33 @@ class AmbassadorhubHelper
     }
 
     /**
+     * Reads an incoming `?ah_lang=` request (updating the stored cookie if present),
+     * then force-(re)loads Ambassador Hub's own language strings in whichever tag is
+     * now current. Shared by our own Dispatcher and by the com_users login template
+     * override, which isn't dispatched through our component at all but still needs
+     * the same toggle to work.
+     *
+     * @return  void
+     *
+     * @since   0.1.0
+     */
+    public static function applyLanguagePreference(): void
+    {
+        $app       = Factory::getApplication();
+        $requested = $app->getInput()->getCmd('ah_lang', '');
+
+        if (\in_array($requested, self::SUPPORTED_LANGUAGE_TAGS, true)) {
+            $app->getInput()->cookie->set(
+                self::LANGUAGE_COOKIE,
+                $requested,
+                ['expires' => time() + 60 * 60 * 24 * 365, 'path' => '/']
+            );
+        }
+
+        $app->getLanguage()->load('com_ambassadorhub', JPATH_SITE, self::getCurrentLanguageTag(), true);
+    }
+
+    /**
      * Fetches a Student's profile picture URL by their Joomla user id, without lazily
      * creating a Student row -- used to render the topbar avatar for any signed-in
      * user, including ones who haven't taken an Ambassador Hub action yet.
@@ -342,5 +410,60 @@ class AmbassadorhubHelper
         $picture = $db->loadResult();
 
         return $picture ?: null;
+    }
+
+    /**
+     * Image mime types accepted from an upload field, mapped to the file extension
+     * saved to disk.
+     *
+     * @since  0.1.0
+     */
+    private const UPLOAD_IMAGE_EXTENSIONS = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/gif'  => 'gif',
+        'image/webp' => 'webp',
+    ];
+
+    /**
+     * Handles an `<input type="file">` image upload for a Group/Event/Post form,
+     * saving it under `/images/ambassadorhub` and returning its public URL.
+     *
+     * Every one of these forms doubles as an edit form (a Group being edited, an Event
+     * being resubmitted, ...), so a blank/invalid file input isn't an error -- it just
+     * means "leave the image as it was", hence returning `$existingValue` unchanged
+     * whenever there's nothing valid to replace it with.
+     *
+     * @param   string   $fieldName      The file input's `name` attribute.
+     * @param   ?string  $existingValue  The image URL already stored, if any (editing).
+     *
+     * @return  string|null  The new image's public URL, or `$existingValue` if no
+     *                        valid image was uploaded.
+     *
+     * @since   0.1.0
+     */
+    public static function processImageUpload(string $fieldName, ?string $existingValue = null): ?string
+    {
+        $file = Factory::getApplication()->getInput()->files->get($fieldName, [], 'raw');
+
+        if (empty($file['name']) || ($file['error'] ?? \UPLOAD_ERR_NO_FILE) !== \UPLOAD_ERR_OK) {
+            return $existingValue;
+        }
+
+        $imageInfo = @getimagesize($file['tmp_name']);
+
+        if ($imageInfo === false || !isset(self::UPLOAD_IMAGE_EXTENSIONS[$imageInfo['mime']])) {
+            return $existingValue;
+        }
+
+        $extension      = self::UPLOAD_IMAGE_EXTENSIONS[$imageInfo['mime']];
+        $filename       = 'ah-' . bin2hex(random_bytes(12)) . '.' . $extension;
+        $destinationDir = JPATH_ROOT . '/images/ambassadorhub';
+
+        if (!File::upload($file['tmp_name'], $destinationDir . '/' . $filename)) {
+            return $existingValue;
+        }
+
+        return Uri::root() . 'images/ambassadorhub/' . $filename;
     }
 }

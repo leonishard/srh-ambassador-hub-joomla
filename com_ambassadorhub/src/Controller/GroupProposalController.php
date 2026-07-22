@@ -63,8 +63,8 @@ class GroupProposalController extends BaseController
         $status      = 'pending';
         $description = $input->get('description', '', 'RAW');
         $category    = $input->getString('category', '');
-        $coverImage  = $input->getString('cover_image', '');
-        $profilePic  = $input->getString('profile_picture', '');
+        $coverImage  = AmbassadorhubHelper::processImageUpload('cover_image', '') ?? '';
+        $profilePic  = AmbassadorhubHelper::processImageUpload('profile_picture', '') ?? '';
 
         /** @var DatabaseInterface $db */
         $db    = Factory::getContainer()->get(DatabaseInterface::class);

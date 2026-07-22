@@ -23,7 +23,7 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 <div class="ambassadorhub ambassadorhub-page">
 	<h1><?php echo Text::sprintf('COM_AMBASSADORHUB_GROUP_EDIT_TITLE', $this->escape($group->name)); ?></h1>
 
-	<form action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=group.save'); ?>" method="post">
+	<form action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=group.save'); ?>" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="id" value="<?php echo (int) $group->id; ?>">
 
 		<div class="ambassadorhub-field">
@@ -38,12 +38,18 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 
 		<div class="ambassadorhub-field">
 			<label for="group-cover-image"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_COVER_IMAGE_LABEL'); ?></label>
-			<input type="text" id="group-cover-image" name="cover_image" value="<?php echo $this->escape($group->cover_image ?? ''); ?>">
+			<?php if (!empty($group->cover_image)) : ?>
+				<img class="ambassadorhub-field__preview" src="<?php echo $this->escape($group->cover_image); ?>" alt="">
+			<?php endif; ?>
+			<input type="file" id="group-cover-image" name="cover_image" accept="image/*">
 		</div>
 
 		<div class="ambassadorhub-field">
 			<label for="group-profile-picture"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_PROFILE_PICTURE_LABEL'); ?></label>
-			<input type="text" id="group-profile-picture" name="profile_picture" value="<?php echo $this->escape($group->profile_picture ?? ''); ?>">
+			<?php if (!empty($group->profile_picture)) : ?>
+				<img class="ambassadorhub-field__preview" src="<?php echo $this->escape($group->profile_picture); ?>" alt="">
+			<?php endif; ?>
+			<input type="file" id="group-profile-picture" name="profile_picture" accept="image/*">
 		</div>
 
 		<div class="ambassadorhub-field">

@@ -30,7 +30,7 @@ echo AmbassadorhubHelper::renderTopbar('events');
 		<p class="ambassadorhub-event-status-note"><?php echo Text::_('COM_AMBASSADORHUB_EVENT_PENDING_NOTE'); ?></p>
 	<?php endif; ?>
 
-	<form action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=event.save'); ?>" method="post">
+	<form action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=event.save'); ?>" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="id" value="<?php echo (int) $event->id; ?>">
 		<input type="hidden" name="group_id" value="<?php echo (int) $this->groupId; ?>">
 
@@ -56,7 +56,10 @@ echo AmbassadorhubHelper::renderTopbar('events');
 
 		<div class="ambassadorhub-field">
 			<label for="event-poster"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_POSTER_LABEL'); ?></label>
-			<input type="text" id="event-poster" name="poster" value="<?php echo $this->escape($event->poster ?? ''); ?>">
+			<?php if (!empty($event->poster)) : ?>
+				<img class="ambassadorhub-field__preview" src="<?php echo $this->escape($event->poster); ?>" alt="">
+			<?php endif; ?>
+			<input type="file" id="event-poster" name="poster" accept="image/*">
 		</div>
 
 		<div class="ambassadorhub-field">

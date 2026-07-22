@@ -68,7 +68,7 @@ class EventController extends BaseController
         $table->event_date  = $input->getString('event_date', $table->event_date ?? '');
         $table->location    = $input->getString('location', $table->location ?? '');
         $table->category    = $input->getString('category', $table->category ?? '');
-        $table->poster      = $input->getString('poster', $table->poster ?? '');
+        $table->poster      = AmbassadorhubHelper::processImageUpload('poster', $table->poster ?? '');
 
         if ($isNew) {
             $user                 = $app->getIdentity();

@@ -43,7 +43,7 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 	<?php if (!$user->guest) : ?>
 		<section id="propose-group-panel" hidden>
 			<h2><?php echo Text::_('COM_AMBASSADORHUB_GROUPS_PROPOSE_TITLE'); ?></h2>
-			<form class="ambassadorhub-inline-form" action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=groupproposal.save'); ?>" method="post">
+			<form class="ambassadorhub-inline-form" action="<?php echo Route::_('index.php?option=com_ambassadorhub&task=groupproposal.save'); ?>" method="post" enctype="multipart/form-data">
 				<label for="proposal-name"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_NAME_LABEL'); ?></label>
 				<input type="text" id="proposal-name" name="name" required>
 
@@ -54,10 +54,10 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 				<textarea id="proposal-description" name="description" rows="3"></textarea>
 
 				<label for="proposal-profile-picture"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_PROFILE_PICTURE_LABEL'); ?></label>
-				<input type="text" id="proposal-profile-picture" name="profile_picture" placeholder="https://...">
+				<input type="file" id="proposal-profile-picture" name="profile_picture" accept="image/*">
 
 				<label for="proposal-cover-image"><?php echo Text::_('COM_AMBASSADORHUB_FIELD_COVER_IMAGE_LABEL'); ?></label>
-				<input type="text" id="proposal-cover-image" name="cover_image" placeholder="https://...">
+				<input type="file" id="proposal-cover-image" name="cover_image" accept="image/*">
 
 				<button type="submit" class="ambassadorhub-btn"><?php echo Text::_('COM_AMBASSADORHUB_GROUPS_PROPOSE_SUBMIT'); ?></button>
 				<?php echo HTMLHelper::_('form.token'); ?>
@@ -97,6 +97,12 @@ echo AmbassadorhubHelper::renderTopbar('groups');
 					<p class="ambassadorhub-caption">
 						<?php echo Text::plural('COM_AMBASSADORHUB_GROUP_N_MEMBERS', (int) $group->member_count); ?>
 					</p>
+
+					<?php if (!empty($group->manager_name)) : ?>
+						<p class="ambassadorhub-caption">
+							<?php echo Text::sprintf('COM_AMBASSADORHUB_GROUP_MANAGED_BY', $this->escape($group->manager_name)); ?>
+						</p>
+					<?php endif; ?>
 
 					<div class="ambassadorhub-card__footer">
 						<?php if ($user->guest) : ?>

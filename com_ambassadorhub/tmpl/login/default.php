@@ -26,12 +26,15 @@ $quickLoginGroups = [
 		['name' => 'Ben Fischer', 'username' => 'ben.fischer'],
 		['name' => 'Carla Weber', 'username' => 'carla.weber'],
 		['name' => 'Diego Alvarez', 'username' => 'diego.alvarez'],
-	],
-	'COM_AMBASSADORHUB_LOGIN_QUICK_STUDENTS' => [
 		['name' => 'Elena Rossi', 'username' => 'elena.rossi'],
 		['name' => 'Finn Becker', 'username' => 'finn.becker'],
 		['name' => 'Grace Adeyemi', 'username' => 'grace.adeyemi'],
 		['name' => 'Hassan Ali', 'username' => 'hassan.ali'],
+	],
+	'COM_AMBASSADORHUB_LOGIN_QUICK_STUDENTS' => [
+		['name' => 'Mia Chen', 'username' => 'mia.chen'],
+		['name' => 'Omar Farouk', 'username' => 'omar.farouk'],
+		['name' => 'Sophie Turner', 'username' => 'sophie.turner'],
 	],
 ];
 

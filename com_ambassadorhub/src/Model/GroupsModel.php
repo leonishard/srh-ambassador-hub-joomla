@@ -83,7 +83,10 @@ class GroupsModel extends ListModel
                 ]
             )
             ->select('(SELECT COUNT(*) FROM ' . $db->quoteName('#__ambassadorhub_group_members') . ' gm WHERE gm.group_id = a.id) AS member_count')
+            ->select($db->quoteName('u.name', 'manager_name'))
             ->from($db->quoteName('#__ambassadorhub_groups', 'a'))
+            ->join('LEFT', $db->quoteName('#__ambassadorhub_students', 's'), $db->quoteName('s.id') . ' = ' . $db->quoteName('a.manager_student_id'))
+            ->join('LEFT', $db->quoteName('#__users', 'u'), $db->quoteName('u.id') . ' = ' . $db->quoteName('s.user_id'))
             ->where($db->quoteName('a.state') . ' = 1');
 
         $category = $this->getState('filter.category');

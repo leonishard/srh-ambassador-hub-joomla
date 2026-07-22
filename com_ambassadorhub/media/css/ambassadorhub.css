@@ -101,6 +101,19 @@ body.com_users.view-login .container-bottom-b {
 	display: none !important;
 }
 
+/*
+ * Cassiopeia's own template.css sets a global `img { max-width: 100%; height: auto; }`
+ * responsive-image reset. `max-width` isn't a property our own image rules override
+ * (they only set `width`), so it silently caps things like the card poster's
+ * intentional "bleed past the card's own padding" width -- capping it back down to
+ * the un-bled width and leaving a gap on one side. Every image on our pages sizes
+ * itself explicitly, so this reset is never wanted here.
+ */
+body.com_ambassadorhub img,
+body.com_users.view-login img {
+	max-width: none;
+}
+
 body.com_ambassadorhub .site-grid,
 body.com_users.view-login .site-grid {
 	display: block;
@@ -261,8 +274,9 @@ body.com_users.view-login .site-grid .container-component > :first-child {
 
 .ambassadorhub-topbar__footer {
 	display: flex;
-	align-items: center;
-	gap: 0.6rem;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.5rem;
 	padding: 0.5rem 1.25rem;
 	border-left: 1px solid var(--line-dark);
 	flex-shrink: 0;
@@ -289,6 +303,10 @@ body.com_users.view-login .site-grid .container-component > :first-child {
 .ambassadorhub-topbar__user-role {
 	text-transform: uppercase;
 	color: var(--ash-fg);
+}
+
+.ambassadorhub-topbar__user-role--active {
+	color: var(--signal);
 }
 
 .ambassadorhub-topbar__avatar {
@@ -594,6 +612,21 @@ body.com_users.view-login .site-grid .container-component > :first-child {
 	padding: 0.6rem 0.75rem;
 }
 
+.ambassadorhub-field input[type="file"] {
+	padding: 0.5rem 0;
+	border: none;
+	background: none;
+}
+
+.ambassadorhub-field__preview {
+	display: block;
+	max-width: 220px;
+	height: auto;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	margin-bottom: 0.5rem;
+}
+
 .ambassadorhub-event-status-note {
 	font-family: var(--font-mono);
 	font-size: 0.8125rem;
@@ -735,6 +768,11 @@ body.com_users.view-login .site-grid .container-component > :first-child {
 	color: var(--fg);
 	padding: 0.6rem 0.75rem;
 	font-family: inherit;
+}
+
+.ambassadorhub-inline-form input[type="file"] {
+	border: none;
+	padding: 0.3rem 0;
 }
 
 .ambassadorhub-inline-form .ambassadorhub-btn {

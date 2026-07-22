@@ -41,6 +41,7 @@
 			<menu link="option=com_ambassadorhub&amp;view=dashboard">COM_AMBASSADORHUB_MENU_DASHBOARD</menu>
 			<menu link="option=com_ambassadorhub&amp;view=groups">COM_AMBASSADORHUB_MENU_GROUPS</menu>
 			<menu link="option=com_ambassadorhub&amp;view=events">COM_AMBASSADORHUB_MENU_EVENTS</menu>
+			<menu link="option=com_ambassadorhub&amp;view=roles">COM_AMBASSADORHUB_MENU_ROLES</menu>
 		</submenu>
 		<files folder="admin">
 			<filename>access.xml</filename>
